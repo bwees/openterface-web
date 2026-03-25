@@ -639,35 +639,6 @@
       <div class="flex flex-col items-center gap-4 text-muted-foreground">
         <VideoOff class="h-12 w-12" />
         <p class="text-sm">No video source</p>
-        <!-- Inline video device selector -->
-        <div class="w-64 space-y-2">
-          {#if kvm.videoDevices.length > 0}
-            <select
-              class="w-full rounded-md border border-muted-foreground/30 bg-background px-2 py-1.5 text-xs"
-              value={kvm.selectedVideoDeviceId}
-              onchange={(e) => {
-                const val = (e.target as HTMLSelectElement).value;
-                if (val) kvm.startVideo(val);
-              }}
-            >
-              <option value="">Select a video device...</option>
-              {#each kvm.videoDevices as device}
-                <option value={device.deviceId}
-                  >{device.label || `Camera ${device.deviceId.slice(0, 8)}`}</option
-                >
-              {/each}
-            </select>
-          {:else}
-            <Button
-              variant="outline"
-              size="sm"
-              class="w-full text-xs"
-              onclick={() => kvm.refreshVideoDevices()}
-            >
-              <RefreshCw class="mr-1 h-3 w-3" /> Scan for Video Devices
-            </Button>
-          {/if}
-        </div>
       </div>
     {/if}
 
