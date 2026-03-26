@@ -12,6 +12,7 @@
     ArrowsUpFromLine,
     ClipboardPaste,
     Info,
+    Keyboard,
     Maximize,
     Monitor,
     Mouse,
@@ -26,6 +27,7 @@
     VideoOff,
     X,
   } from '@lucide/svelte';
+  import { HID_KEY } from '$lib/serial/hid-keycodes';
   import { onMount } from 'svelte';
 
   let videoEl: HTMLVideoElement | undefined = $state();
@@ -564,6 +566,51 @@
           {:else if !showSnippetForm}
             <p class="text-xs text-muted-foreground">No saved snippets yet.</p>
           {/if}
+        </div>
+      </Popover.Content>
+    </Popover.Root>
+
+    <!-- Keyboard special keys popup -->
+    <Popover.Root>
+      <Popover.Trigger>
+        {#snippet child({ props })}
+          <Button
+            variant="outline"
+            size="sm"
+            class="h-7 gap-1 px-2 text-xs"
+            {...props}
+            disabled={!kvm.connected}
+          >
+            <Keyboard class="h-3.5 w-3.5" />
+            <span class="hidden sm:inline">Keys</span>
+          </Button>
+        {/snippet}
+      </Popover.Trigger>
+      <Popover.Content class="w-auto" align="start">
+        <div class="flex flex-wrap gap-1">
+          <Button
+            variant="outline"
+            size="sm"
+            class="h-8 min-w-[2.5rem] px-2 text-xs font-mono"
+            onclick={() => kvm.sendKeyTap(HID_KEY.Escape)}
+            disabled={!kvm.connected}
+          >Esc</Button>
+          {#each Array.from({ length: 12 }, (_, i) => i + 1) as n}
+            <Button
+              variant="outline"
+              size="sm"
+              class="h-8 min-w-[2.5rem] px-2 text-xs font-mono"
+              onclick={() => kvm.sendKeyTap(HID_KEY[`F${n}`])}
+              disabled={!kvm.connected}
+            >F{n}</Button>
+          {/each}
+          <Button
+            variant="outline"
+            size="sm"
+            class="h-8 min-w-[2.5rem] px-2 text-xs font-mono"
+            onclick={() => kvm.sendKeyTap(HID_KEY.Delete)}
+            disabled={!kvm.connected}
+          >Del</Button>
         </div>
       </Popover.Content>
     </Popover.Root>
