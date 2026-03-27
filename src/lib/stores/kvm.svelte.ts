@@ -276,6 +276,18 @@ class KvmState {
     }
   }
 
+  // Send a single key tap (press + release) by HID keycode
+  async sendKeyTap(hidKeycode: number, modifier = 0) {
+    if (!this.connected) return;
+    try {
+      await this.serial.write(buildKeyboardFrame(modifier, [hidKeycode]));
+      await new Promise((r) => setTimeout(r, 8));
+      await this.serial.write(buildKeyReleaseFrame());
+    } catch {
+      // ignore
+    }
+  }
+
   // Text paste — types each character as sequential key press/release
   async pasteText(text: string) {
     if (!this.connected || this.isPasting) return;
